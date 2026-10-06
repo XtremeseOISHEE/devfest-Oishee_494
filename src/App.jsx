@@ -5,18 +5,24 @@ import TenderDetails from './components/TenderDetails.jsx'
 import FileUpload from './components/FileUpload.jsx'
 import FileList from './components/FileList.jsx'
 import { parseRequirements } from './requirements.js'
+import StatusSummary from './components/StatusSummary.jsx'
 import { readPdfFile } from './pdfReader.js'
+import { computeAllStatuses } from './status.js'
 import { t } from './i18n.js'
+
+function omitKeys(obj, keys) {
+  const next = { ...obj }
+  for (const k of keys) delete next[k]
+  return next
+}
 
 function App() {
   const [lang, setLang] = useState('bn')
   const [tender, setTender] = useState(null)
   const [requirements, setRequirements] = useState([])
   const [files, setFiles] = useState([])
-  /* eslint-disable no-unused-vars -- read by the matching and expiry steps */
   const [matches, setMatches] = useState({})
   const [expiryDates, setExpiryDates] = useState({})
-  /* eslint-enable no-unused-vars */
   const [loadErrors, setLoadErrors] = useState([])
   const [uploadErrors, setUploadErrors] = useState([])
   const [uploading, setUploading] = useState(false)
@@ -54,7 +60,26 @@ function App() {
 
   const handleRemoveFile = (id) => {
     setFiles((prev) => prev.filter((f) => f.id !== id))
+    const freed = Object.keys(matches).filter((reqId) => matches[reqId] === id)
+    if (freed.length > 0) {
+      setMatches((prev) => omitKeys(prev, freed))
+      setExpiryDates((prev) => omitKeys(prev, freed))
+    }
   }
+
+  // A new or cleared match drops the old expiry date, since it belonged to the old file.
+  const handleMatch = (reqId, fileId) => {
+    if ((matches[reqId] ?? null) === fileId) return
+    setMatches((prev) => (fileId ? { ...prev, [reqId]: fileId } : omitKeys(prev, [reqId])))
+    setExpiryDates((prev) => omitKeys(prev, [reqId]))
+  }
+
+  const handleExpiryChange = (reqId, date) => {
+    setExpiryDates((prev) => (date ? { ...prev, [reqId]: date } : omitKeys(prev, [reqId])))
+  }
+
+  const deadline = tender?.submission_deadline ?? ''
+  const statuses = computeAllStatuses(requirements, files, matches, expiryDates, deadline)
 
   const toggleLang = () => setLang((l) => (l === 'bn' ? 'en' : 'bn'))
 
@@ -78,7 +103,23 @@ function App() {
             </div>
           )}
           <TenderDetails lang={lang} tender={tender} />
-          <RequirementsList lang={lang} requirements={requirements} />
+          <StatusSummary
+            lang={lang}
+            requirements={requirements}
+            statuses={statuses}
+            expiryDates={expiryDates}
+            deadline={deadline}
+          />
+          <RequirementsList
+            lang={lang}
+            requirements={requirements}
+            files={files}
+            matches={matches}
+            expiryDates={expiryDates}
+            statuses={statuses}
+            onMatch={handleMatch}
+            onExpiryChange={handleExpiryChange}
+          />
         </div>
         <aside className="column">
           <section className="files">

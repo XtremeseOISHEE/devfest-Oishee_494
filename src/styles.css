@@ -12,6 +12,8 @@
   --mandatory-text: #1f6f5c;
   --optional-bg: #eef0f3;
   --optional-text: #5d6675;
+  --ok-bg: #e3f4e6;
+  --ok-text: #1b6b2c;
   --warning-bg: #fff4e0;
   --warning-text: #8a4b00;
   font-family: 'Noto Sans Bengali', 'Hind Siliguri', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -243,6 +245,91 @@ body {
   padding: 2px 8px;
   border-radius: 999px;
   font-size: 0.85rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table td {
+  vertical-align: top;
+}
+
+.doc-title {
+  margin-bottom: 4px;
+}
+
+.select,
+.date-input {
+  max-width: 220px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.hint {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+}
+
+.status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-blocking {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.status-neutral {
+  background: var(--optional-bg);
+  color: var(--optional-text);
+}
+
+.status-ok {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+}
+
+.summary {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.summary-blocking {
+  border-color: var(--danger-text);
+}
+
+.summary-clear {
+  border-color: var(--ok-text);
+}
+
+.summary-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.summary p {
+  margin: 0;
+}
+
+.summary ul {
+  margin: 4px 0 0;
+  padding-left: 20px;
 }
 
 .tag-mandatory {
