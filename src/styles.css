@@ -12,6 +12,8 @@
   --mandatory-text: #1f6f5c;
   --optional-bg: #eef0f3;
   --optional-text: #5d6675;
+  --warning-bg: #fff4e0;
+  --warning-text: #8a4b00;
   font-family: 'Noto Sans Bengali', 'Hind Siliguri', system-ui, -apple-system, 'Segoe UI', sans-serif;
   color: var(--text);
   background: var(--bg);
@@ -27,7 +29,7 @@ body {
 }
 
 .app {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 16px;
 }
@@ -99,7 +101,90 @@ body {
 }
 
 .main {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 24px;
   padding: 16px 0;
+}
+
+@media (max-width: 800px) {
+  .main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.files h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.dropzone {
+  margin-bottom: 16px;
+  padding: 20px 16px;
+  text-align: center;
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.dropzone p {
+  margin: 0 0 10px;
+}
+
+.dropzone .muted {
+  margin: 10px 0 0;
+}
+
+.dropzone-active {
+  border-color: var(--primary);
+  background: var(--mandatory-bg);
+}
+
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.file-info {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.file-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.file-duplicate {
+  font-size: 0.9rem;
+  color: var(--warning-text);
+  overflow-wrap: anywhere;
+}
+
+.tag-duplicate {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.button-small {
+  padding: 4px 10px;
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .alert {
