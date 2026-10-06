@@ -7,13 +7,26 @@ import FileList from './components/FileList.jsx'
 import { parseRequirements } from './requirements.js'
 import StatusSummary from './components/StatusSummary.jsx'
 import { readPdfFile } from './pdfReader.js'
-import { computeAllStatuses } from './status.js'
+import GeneratePanel from './components/GeneratePanel.jsx'
+import { computeAllStatuses, isBlocking } from './status.js'
+import { buildPackage, packageFileName, PackageFileError } from './packager.js'
 import { t } from './i18n.js'
 
 function omitKeys(obj, keys) {
   const next = { ...obj }
   for (const k of keys) delete next[k]
   return next
+}
+
+function downloadBytes(bytes, fileName) {
+  const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }))
+  const a = document.createElement('a')
+  a.href = url
+  a.download = fileName
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
 function App() {
@@ -26,6 +39,8 @@ function App() {
   const [loadErrors, setLoadErrors] = useState([])
   const [uploadErrors, setUploadErrors] = useState([])
   const [uploading, setUploading] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const [generateResult, setGenerateResult] = useState(null)
 
   const handleLoadRequirements = async (file) => {
     const result = parseRequirements(await file.text())
@@ -81,6 +96,26 @@ function App() {
   const deadline = tender?.submission_deadline ?? ''
   const statuses = computeAllStatuses(requirements, files, matches, expiryDates, deadline)
 
+  const handleGenerate = async () => {
+    if (requirements.some((r) => isBlocking(statuses[r.id]))) return
+    setGenerating(true)
+    setGenerateResult(null)
+    try {
+      const bytes = await buildPackage({ tender, requirements, matches, files, lang })
+      const name = packageFileName(tender)
+      downloadBytes(bytes, name)
+      setGenerateResult({ done: name })
+    } catch (err) {
+      const error =
+        err instanceof PackageFileError
+          ? { key: 'errPackageFile', params: { name: err.fileName } }
+          : { key: 'errPackageGeneric' }
+      setGenerateResult({ error })
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   const toggleLang = () => setLang((l) => (l === 'bn' ? 'en' : 'bn'))
 
   return (
@@ -119,6 +154,14 @@ function App() {
             statuses={statuses}
             onMatch={handleMatch}
             onExpiryChange={handleExpiryChange}
+          />
+          <GeneratePanel
+            lang={lang}
+            requirements={requirements}
+            statuses={statuses}
+            generating={generating}
+            result={generateResult}
+            onGenerate={handleGenerate}
           />
         </div>
         <aside className="column">

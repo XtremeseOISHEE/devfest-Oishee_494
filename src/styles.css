@@ -332,6 +332,55 @@ body {
   padding-left: 20px;
 }
 
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.generate {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.generate > p,
+.generate > .alert {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.generate-blocked {
+  color: var(--danger-text);
+}
+
+.generate-done {
+  color: var(--ok-text);
+}
+
+.progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .tag-mandatory {
   background: var(--mandatory-bg);
   color: var(--mandatory-text);
