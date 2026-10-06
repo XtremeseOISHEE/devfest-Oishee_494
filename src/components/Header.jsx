@@ -1,26 +1,15 @@
 import { t } from '../i18n.js'
 
-function Header({ lang, onToggleLang, onLoadRequirements, tender }) {
+function Header({ lang, onToggleLang, onLoadRequirements }) {
   const handleFile = (e) => {
     const file = e.target.files?.[0]
     if (file) onLoadRequirements(file)
     e.target.value = ''
   }
 
-  const tenderName = tender
-    ? (lang === 'bn' ? tender.title_bn ?? tender.title_en : tender.title_en ?? tender.title_bn) ?? tender.id
-    : null
-
   return (
     <header className="header">
-      <div className="header-title">
-        <h1>{t(lang, 'appTitle')}</h1>
-        {tenderName && (
-          <p className="header-tender">
-            {t(lang, 'tenderLabel')}: {tenderName}
-          </p>
-        )}
-      </div>
+      <h1>{t(lang, 'appTitle')}</h1>
       <div className="header-actions">
         <label className="button">
           {t(lang, 'loadRequirements')}

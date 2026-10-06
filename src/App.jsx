@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Header from './components/Header.jsx'
 import RequirementsList from './components/RequirementsList.jsx'
+import TenderDetails from './components/TenderDetails.jsx'
 import { parseRequirements } from './requirements.js'
 import { t } from './i18n.js'
 
@@ -35,7 +36,6 @@ function App() {
     <div className="app" lang={lang}>
       <Header
         lang={lang}
-        tender={tender}
         onToggleLang={toggleLang}
         onLoadRequirements={handleLoadRequirements}
       />
@@ -50,6 +50,7 @@ function App() {
             </ul>
           </div>
         )}
+        <TenderDetails lang={lang} tender={tender} />
         <RequirementsList lang={lang} requirements={requirements} />
       </main>
     </div>
